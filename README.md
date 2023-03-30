@@ -1,3 +1,42 @@
+# Integrating Foundry into SE-2
+
+- [ ] Navigate to `packages/hardhat/`
+- [ ] Run `forge init --force --no-commit` to get the basic foundry files layout
+  - This will bring in the basic foundry framework layout as described [here](https://book.getfoundry.sh/getting-started/first-steps#first-steps-with-foundry).
+- [ ] Change the `foundry.toml` so it says:
+```
+[profile.default]
+src = 'contracts'
+out = 'out'
+libs = ['node_modules', 'lib']
+test = 'test/foundry'
+cache_path  = 'forge-cache'
+remappings = [
+    "@openzeppelin=lib/openzeppelin-contracts/",
+    'eth-gas-reporter/=node_modules/eth-gas-reporter/',
+    'hardhat-deploy/=node_modules/hardhat-deploy/',
+    'hardhat/=node_modules/hardhat/',
+]
+
+[fmt]
+line_length = 100
+
+# See more config options https://github.com/foundry-rs/foundry/tree/master/config
+```
+- [ ] Tweak the layout so it works with the ScaffoldETH v2 setup as per the shortcuts put into the above `foundry.toml`
+   - Create a subdirectory called `foundry` in `test`
+   - Store contracts still under `./packages/hardhat/src/`
+   - Delete the `scripts` folder since deployment is done using hardhat w/ Scaffold-ETH v2 typically.
+   - Add dependencies (for foundry, it's in git submodules, not npm packages).
+      - Add them by using `forge install <repo/library>`
+- [ ] Make adjustments specific to [foundry-strategy-mix](https://github.com/storming0x/foundry_strategy_mix)
+   - Add dependencies: 
+      `forge install yearn/yearn-vaults --no-commit` && `forge install OpenZeppelin/openzeppelin-contracts --no-commit`
+   - Adjust dependencies w/ ones needed for yearn strategy framework
+      - Deemed unnecessary because the foundry tests running and deployment is what matters. Prettier and linter are already part of the scaffold-eth v2 setup I believe.
+   - Add to .gitignore
+   - Change deployment script `00_deploy_your_contract.ts` to include the new contracts. **In the case of the yearn strategies, the `StrategyFixture.sol` will show a good starting point for what is needed for deployment so we can debug using the ScaffoldETH v2 UI**
+
 # Scaffold-Eth 2
 
 ⚠️ This project is currently under active development. Things might break. Feel free to check the open issues & create new ones.
